@@ -130,7 +130,7 @@ jobs:
   build_mac:
     name: 'macos ${{ github.event.inputs.message }}'
     needs: check_updates
-    if: ${{ (needs.check_updates.outputs.should_run != 'false') && (github.event_name != 'workflow_dispatch' || (github.event_name == 'workflow_dispatch' && (contains(github.event.inputs.message, '[macOS]') || (!contains(github.event.inputs.message, '[macOS]') && !contains(github.event.inputs.message, '[Linux]') && !contains(github.event.inputs.message, '[Windows]'))))) }}
+    if: false
     runs-on: macos-12
     steps:
       - name: Set env vars
@@ -208,7 +208,7 @@ jobs:
   build_linux:
     name: 'ubuntu ${{ github.event.inputs.message }}'
     needs: check_updates
-    if: ${{ (needs.check_updates.outputs.should_run != 'false') && (github.event_name != 'workflow_dispatch' || (github.event_name == 'workflow_dispatch' && (contains(github.event.inputs.message, '[Linux]') || (!contains(github.event.inputs.message, '[macOS]') && !contains(github.event.inputs.message, '[Linux]') && !contains(github.event.inputs.message, '[Windows]'))))) }}
+    if: false
     runs-on: ubuntu-22.04
     steps:
       - name: Set env vars
@@ -387,3 +387,9 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: pnpm build --publish always
         shell: bash
+      - name: Upload build artifacts
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: out/Ferdium-win-AutoSetup-*.exe
