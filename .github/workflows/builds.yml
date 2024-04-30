@@ -388,6 +388,7 @@ jobs:
         run: pnpm build --publish always
         shell: bash
       - name: Upload build artifacts
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: windows
