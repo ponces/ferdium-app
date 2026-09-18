@@ -20,6 +20,7 @@ import minimist from 'minimist';
 import ms from 'ms';
 import { enableWebContents, initializeRemote } from './electron-util';
 import enforceMacOSAppLocation from './enforce-macos-app-location';
+import { getTranslatedText } from './helpers/i18n-helpers';
 
 initializeRemote();
 
@@ -400,6 +401,46 @@ const createWindow = () => {
       contents.on('did-create-window', child => {
         enableWebContents(child.webContents);
         child.webContents.setWebRTCIPHandlingPolicy(webRTCIPHandlingPolicy);
+
+        // Show the unsaved-changes decision explicitly. Electron receives the
+        // page's beforeunload request, but does not reliably display the
+        // browser-style confirmation dialog for service popups on Linux.
+        child.webContents.on('will-prevent-unload', event => {
+          const locale = settings.get('locale') || 'en-US';
+
+          const response = dialog.showMessageBoxSync(child, {
+            type: 'warning',
+            title: getTranslatedText(
+              locale,
+              'global.unsavedChanges.title',
+              'Unsaved changes',
+            ),
+            message: getTranslatedText(
+              locale,
+              'global.unsavedChanges.message',
+              'You have unsaved changes.',
+            ),
+            detail: getTranslatedText(
+              locale,
+              'global.unsavedChanges.detail',
+              'Are you sure you want to leave this page?',
+            ),
+            buttons: [
+              getTranslatedText(locale, 'global.stay', 'Stay'),
+              getTranslatedText(locale, 'global.leave', 'Leave'),
+            ],
+            defaultId: 0,
+            cancelId: 0,
+            noLink: true,
+          });
+
+          // By default the page keeps the window open. Electron's
+          // will-prevent-unload behavior is inverted: preventDefault() allows
+          // the unload to continue after the user chooses Leave.
+          if (response === 1) {
+            event.preventDefault();
+          }
+        });
 
         // Outlook creates an about:blank popup and navigates it through its
         // WindowProxy. Capture that navigation on the child window itself.

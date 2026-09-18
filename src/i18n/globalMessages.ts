@@ -66,6 +66,26 @@ export default defineMessages({
     id: 'global.quitConfirmation',
     defaultMessage: 'Do you really want to quit Ferdium?',
   },
+  unsavedChangesTitle: {
+    id: 'global.unsavedChanges.title',
+    defaultMessage: 'Unsaved changes',
+  },
+  unsavedChangesMessage: {
+    id: 'global.unsavedChanges.message',
+    defaultMessage: 'You have unsaved changes.',
+  },
+  unsavedChangesDetail: {
+    id: 'global.unsavedChanges.detail',
+    defaultMessage: 'Are you sure you want to leave this page?',
+  },
+  stay: {
+    id: 'global.stay',
+    defaultMessage: 'Stay',
+  },
+  leave: {
+    id: 'global.leave',
+    defaultMessage: 'Leave',
+  },
   downloads: {
     id: 'global.downloads',
     defaultMessage: 'Downloads',
